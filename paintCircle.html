@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>答题结果</title>
+	<link rel="stylesheet" href="css/common.css">
+	<script type="text/javascript" src="js/common.js"></script>
+</head>
+<body>
+	<div class="container font14">
+		<div class="answer-title cl-white">
+			<div class="in-block portrait center-portrait"></div>
+			<div class="in-block ml">
+				<div class="mb-sm username">张良</div>
+				<div class="mb-sm depart_name"></div>
+				<div class="font-num" id="currentDate"></div>
+			</div>
+		</div>
+		<div class="question-grade">
+			<div class="circle-wrap">
+				<div class="circle"></div>
+				<div class="top"></div>
+				<div class="bottom"></div>
+				<div class="rate align-center">
+					<div class="cl-primary text-nowrap">本次答题正确率</div>
+					<div class="rate-num"><span class="rate-val"></span><span class="rate-deco">%</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="slidebar wd-100"></div>
+		<div class="align-center result-question-header">
+			<span class="icon-result_title in-block" style="vertical-align:-4px;"></span>
+			<span class="in-block">今日题目回顾</span>
+		</div>
+		<div class="result-question-wrap">
+			<ul>
+				<li class="cl-primary clearfix result-question-title">
+					<span class="fl font-num">(1/5)</span>
+					<span class="fr cl-red">正确答案 D</span>
+				</li>
+				<li class="mt font16">美国有移民监么?</li>
+				<li class="question-item">
+					<span class="code">A.</span>
+					<span class="text">有,每年住满180天</span>
+				</li>
+				<li class="question-item">
+					<span class="code">B.</span>
+					<span class="text">有,每年住满63天</span>
+				</li>
+				<li class="question-item selected-active">
+					<span class="code">C.</span>
+					<span class="text">没有,每年无需入境</span>
+				</li>
+				<li class="question-item">
+					<span class="code">D.</span>
+					<span class="text">没有,每年入境2-3次</span>
+				</li>
+			</ul>
+		</div>
+		<a href="answer-center.html" class="question-nextbtn cl-white align-center wd-100">返回首页</a>
+	</div>
+	<div class="self-load">加载中...</div>
+	<script>
+		window.onload = function() {
+
+			var circle_top = document.querySelector('.top'),
+				circle_bot = document.querySelector(".bottom"),
+				rate_wrap = document.querySelector('.rate'),
+				rate_val = document.querySelector('.rate-val');
+
+			var renderCircle = {
+
+				'percentNum': '',
+				'num_info': rate_val,
+				'rate_wrap': rate_wrap,
+				'circle_top': circle_top,
+				'circle_bot': circle_bot,
+
+				renderTextInfo: function renderTextInfo() {
+					var per_num = this.percentNum;
+					this.num_info.innerText = per_num;
+					this.rate_wrap.style.cssText = 'opacity:1;';
+				},
+
+				calCircleDeg: function calCircleDeg(num) {
+					return '-webkit-transform: rotate(' + num + 'deg);-o-transform: rotate(' + num + 'deg);-moz-transform: rotate(' + num + 'deg);transform: rotate(' + num + 'deg);';
+				},
+
+				initial: function initial() {
+					var deg = 360,
+						that = this,
+						count = 360 * this.percentNum / 100;
+
+					//渲染下半圆
+					var bot_deg = count > 180 ? '180' : count;
+					this.circle_bot.style.cssText = this.calCircleDeg(bot_deg);
+
+					//渲染上半圆
+					var paintTTopCircle = function paintTTopCircle() {
+						var top_deg = count - 180;
+						that.circle_bot.style.display = 'none';
+						that.circle_top.style.cssText = that.calCircleDeg(top_deg);
+						that.circle_bot.removeEventListener('transitionend', paintTTopCircle);
+					};
+
+					if (count > 180) {
+						this.circle_bot.addEventListener('transitionend', paintTTopCircle);
+					}
+					that.renderTextInfo();
+				},
+
+				paintCircle: function paintCircle(rate) {
+					this.percentNum = rate;
+					this.initial();
+				}
+			};
+
+			// var callback = function(grade) {
+				setTimeout(function() {
+					renderCircle.paintCircle('80');
+				}, 1000);
+			// }
+
+			//填充用户信息
+			// fillUserPage();
+
+			//填充当前日期
+			getElem('#currentDate').innerText = getNowFormatDate();
+
+			//加载今日题目回顾
+			// question.init_history(callback);
+		};
+		</script>
+</body>
+</html>
